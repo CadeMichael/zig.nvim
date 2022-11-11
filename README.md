@@ -19,6 +19,16 @@ require('zig')
 ```
 ## Screen Shots
 
+### Successful Test Run
+
 ![](imgs/zig_pass.jpeg)
+
+### Failing Test Run
+
+#### User Message
+
 ![](imgs/zig_fail.jpeg)
+
+#### Virtual Text Insertion
+
 ![](imgs/virt_text.jpeg)
