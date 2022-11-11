@@ -124,7 +124,7 @@ function ZigBuild()
         if #data > 1 then
           handleData(data, regex, b, ns)
         else
-          vim.api.nvim_notify('Success!', vim.log.levels.INFO, {})
+          vim.api.nvim_notify('No Compile Time Errors...', vim.log.levels.INFO, {})
         end
       end,
       on_stdout = function(_, data)
@@ -146,7 +146,7 @@ function ZigBuild()
         if #data > 1 then
           handleData(data, regex, b, ns)
         else
-          vim.api.nvim_notify('Success!', vim.log.levels.INFO, {})
+          vim.api.nvim_notify('No Compile Time Errors...', vim.log.levels.INFO, {})
         end
       end,
       on_stdout = function(_, data)
@@ -169,7 +169,10 @@ local settings = vim.g.zig_settings
     or {
       test = '<space>tf',
       build = '<space>bf',
-      autoFmt = true
+      save = {
+        format = true,
+        build = true,
+      }
     }
 
 vim.api.nvim_create_autocmd(
@@ -186,7 +189,7 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-if settings.autoFmt then
+if settings.save.format then
   vim.api.nvim_create_autocmd(
     "BufWritePost",
     {
@@ -196,6 +199,9 @@ if settings.autoFmt then
       callback = function()
         local file = vim.api.nvim_buf_get_name(0)
         vim.cmd('silent !zig fmt ' .. file)
+        if settings.save.build then
+          vim.cmd [[silent lua ZigBuild()]]
+        end
       end,
     }
   )
