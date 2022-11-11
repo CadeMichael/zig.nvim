@@ -19,6 +19,6 @@ require('zig')
 ```
 ## Screen Shots
 
-![](imgs/zig_pass.png)
-![](imgs/zig_fail.png)
-![](imgs/virt_text.png)
+![](imgs/zig_pass.jpeg)
+![](imgs/zig_fail.jpeg)
+![](imgs/virt_text.jpeg)
