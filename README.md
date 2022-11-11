@@ -8,9 +8,12 @@
 
 ```lua
 vim.g.zig_settings = {
-  test = '<space>tf', -- command to test file
-  build = '<space>bf', -- command to build file
-  autoFmt = true, -- auto format on save
+  -- command to test file
+  test = '<space>tf',
+  -- command to build file
+  build = '<space>bf',
+  -- settings on save
+  save = {format = true, build = false},
 }
 require('zig')
 ```
