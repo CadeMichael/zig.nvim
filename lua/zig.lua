@@ -17,17 +17,36 @@ local handleOutput = function(data, regex, b, ns)
       -- get just the line numbers
       table.insert(lines, string.match(v, '[0-9]+'))
     end
+    -- sometimes errors denoted './filename:linum'
+    -- check for this if no errors found with 'regex'
+    if #lines == 0 then
+      local localRes = string.match(msg, './.+:[0-9]+')
+      if localRes then
+        table.insert(lines, string.match(localRes, '[0-9]+'))
+      end
+    end
     if #lines > 0 then
       -- add marks to where tests failed
       for _, v in ipairs(lines) do
-        -- make sure line exists in file
         local max = vim.api.nvim_buf_line_count(0)
-        if tonumber(v) <= max then
-          vim.api.nvim_buf_set_extmark(b, ns, tonumber(v) - 1, -1, {
-            virt_text = { { ' ✗', 'ErrorMsg' } },
-            -- overlay prevents conflict with diagnostic messages
-            virt_text_pos = 'overlay',
-          })
+        -- make sure line exists in file
+        local linum = tonumber(v)
+        local offset = 1
+        -- when error involves 'eof' need to -2
+        if linum - 1 == max then
+          offset = 2
+        end
+        if linum - 1 <= max and linum > 0 then
+          vim.api.nvim_buf_set_extmark(
+            b,
+            ns,
+            -- line num & last col num
+            linum - offset, -1,
+            {
+              virt_text = { { ' ✗', 'ErrorMsg' } },
+              -- overlay prevents virt text conflict
+              virt_text_pos = 'overlay',
+            })
         end
       end
     end
@@ -124,7 +143,10 @@ function ZigBuild()
         if #data > 1 then
           handleData(data, regex, b, ns)
         else
-          vim.api.nvim_notify('No Compile Time Errors...', vim.log.levels.INFO, {})
+          vim.api.nvim_notify(
+            'No Compile Time Errors...',
+            vim.log.levels.INFO,
+            {})
         end
       end,
       on_stdout = function(_, data)
@@ -146,7 +168,10 @@ function ZigBuild()
         if #data > 1 then
           handleData(data, regex, b, ns)
         else
-          vim.api.nvim_notify('No Compile Time Errors...', vim.log.levels.INFO, {})
+          vim.api.nvim_notify(
+            'No Compile Time Errors...',
+            vim.log.levels.INFO,
+            {})
         end
       end,
       on_stdout = function(_, data)
